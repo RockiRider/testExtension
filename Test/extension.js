@@ -1,5 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+
 const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
@@ -66,13 +67,22 @@ function activate(context) {
 			});
 		});
 		//Creates MD File
-		fs.writeFile(path.join(folderPath, "Display.md"), display, err =>{
+		const mdPath = path.join(folderPath, "Display.md");
+		fs.writeFile(mdPath, display, err =>{
 			if(err){
 				console.error(err);
 				return vscode.window.showErrorMessage("Failed to create README file");
 			}
-			vscode.window.showInformationMessage("Created README File");
+			//vscode.window.showInformationMessage("Created README File");
+			try {
+				vscode.workspace.openTextDocument(mdPath).then(document => vscode.window.showTextDocument(document))
+			  }
+			  catch(err) {
+				console.log("Failed To Show MD Document");
+			  }
 		})
+
+		
 	});
 
 	context.subscriptions.push(disposable);
