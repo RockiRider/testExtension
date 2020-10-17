@@ -10,14 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:Test.helloWorld"
+		"onCommand:Test.startAnimation"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "Test.helloWorld",
-				"title": "Hello World"
+				"command": "Test.startAnimation",
+				"title": "Start Animation"
 			}
 		]
 	},
