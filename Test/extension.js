@@ -23,10 +23,8 @@ function activate(context) {
 	// The commandId parameter must match the command field in package.json
 	let disposable = vscode.commands.registerCommand('Test.startAnimation', function () {
 
-		//let close_other_editor_command_id = "workbench.action.closeEditorsInOtherGroups";
-		//let markdown_preview_command_id = "markdown.showPreviewToSide";
 		let input = "Input Here!";
-
+		let markdownPreview = "markdown.showPreviewToSide";
 		const htmlContent = `
 		<svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
 	<foreignObject width="100%" height="100%">
@@ -76,6 +74,8 @@ function activate(context) {
 				vscode.window.showInformationMessage("Created Animation File");
 			});
 		});
+
+
 		//Creates MD File
 		const mdPath = path.join(folderPath, "Display.md");
 		fs.writeFile(mdPath, display, err => {
@@ -83,55 +83,12 @@ function activate(context) {
 				console.error(err);
 				return vscode.window.showErrorMessage("Failed to create README file");
 			}
-			//Bring up MD File
+			//Bring up MD File & Preview
 			vscode.workspace.openTextDocument(mdPath).then(document => vscode.window.showTextDocument(document), err => {
-				console.log("Failed To Show MD Document");
-			});
+				console.log("Failed To Show MD Document" + err);
+			}).then(() => vscode.commands.executeCommand(markdownPreview).then(() => {}, (err) => console.error(err)));
 
-			//Bring up MD File Preview
-			//vscode.commands.executeCommand(markdown_preview_command_id).then(() => {}, (e) => console.error(e));
-			//console.log("Failed to Bring Up Preview");
-		})
-
-	let alreadyOpenedFirstMarkdown = false;
-    let markdown_preview_command_id = "";
-    let close_other_editor_command_id = "";
-    close_other_editor_command_id = "workbench.action.closeEditorsInOtherGroups";
-    markdown_preview_command_id = "markdown.showPreviewToSide";
-    function previewFirstMarkdown() {
-        if (alreadyOpenedFirstMarkdown) {
-	    return;
-	}
-        let editor = vscode.window.activeTextEditor;
-        if (editor) {
-            let doc = editor.document;
-            if (doc && doc.languageId === "markdown") {
-                openMarkdownPreviewSideBySide();
-                alreadyOpenedFirstMarkdown = true;
-            }
-        }
-    }
-    function openMarkdownPreviewSideBySide() {
-        vscode.commands.executeCommand(close_other_editor_command_id)
-        .then(() => vscode.commands.executeCommand(markdown_preview_command_id))
-        .then(() => {}, (e) => console.error(e));
-    }
-
-    if (vscode.window.activeTextEditor) {
-        previewFirstMarkdown();
-    } else {
-        vscode.window.onDidChangeActiveTextEditor(()=>{
-            previewFirstMarkdown();
-        });
-    }
-
-    vscode.workspace.onDidOpenTextDocument((doc)=>{
-        if (doc && doc.languageId === "markdown") {
-            openMarkdownPreviewSideBySide();
-        }
-    });
-
-
+		})		
 	});
 
 	context.subscriptions.push(disposable);
